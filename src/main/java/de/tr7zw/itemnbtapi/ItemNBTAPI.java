@@ -1,71 +1,39 @@
 package de.tr7zw.itemnbtapi;
 
-import java.io.IOException;
-import java.util.logging.Level;
-
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
 
-public class ItemNBTAPI extends JavaPlugin implements CommandExecutor {
+public class ItemNBTAPI {
+    private static Boolean compatible = null;
 
-    private static boolean compatible = false;
+    public static boolean isCompatible() {
+        if (compatible == null) {
+            try {
+                ItemStack item = new ItemStack(Material.STONE, 1);
+                NBTItem nbtItem = new NBTItem(item);
 
-    @Override
-    public void onEnable() {
-        initMetrics();
-        getLogger().info("Running NBT reflection test...");
-        try {
-            ItemStack item = new ItemStack(Material.STONE, 1);
-            NBTItem nbtItem = new NBTItem(item);
+                nbtItem.setString("stringTest", "TestString");
+                nbtItem.setInteger("intTest", 42);
+                nbtItem.setDouble("doubleTest", 1.5d);
+                nbtItem.setBoolean("booleanTest", true);
 
-            nbtItem.setString("stringTest", "TestString");
-            nbtItem.setInteger("intTest", 42);
-            nbtItem.setDouble("doubleTest", 1.5d);
-            nbtItem.setBoolean("booleanTest", true);
+                item = nbtItem.getItem();
 
-            item = nbtItem.getItem();
-
-            if (!nbtItem.hasKey("stringTest")) {
-                getLogger().info("Does not have key...");
-                return;
+                if (!nbtItem.hasKey("stringTest")) {
+                    compatible = false;
+                }
+                if (!nbtItem.getString("stringTest").equals("TestString")
+                        || nbtItem.getInteger("intTest") != 42
+                        || nbtItem.getDouble("doubleTest") != 1.5d
+                        || !nbtItem.getBoolean("booleanTest")) {
+                    compatible = false;
+                }
+            } catch (Exception ignore) {
+                compatible = false;
             }
-            if (!nbtItem.getString("stringTest").equals("TestString")
-                    || nbtItem.getInteger("intTest") != 42
-                    || nbtItem.getDouble("doubleTest") != 1.5d
-                    || !nbtItem.getBoolean("booleanTest")) {
-                getLogger().info("Key does not equal original value...");
-
-                return;
-            }
-        } catch (Exception ex) {
-            getLogger().log(Level.SEVERE, null, ex);
-            return;
+            compatible = true;
         }
 
-        compatible = true;
-        getLogger().info("Success! This version of Item-NBT-API is compatible with your server.");
-    }
-
-    @Override
-    public void onDisable() {
-    }
-
-    public boolean isCompatible() {
         return compatible;
     }
-
-    private void initMetrics() {
-        try {
-            Metrics metrics = new Metrics(this);
-            metrics.start();
-        } catch (IOException ex) {
-            getLogger().log(Level.SEVERE, null, ex);
-        }
-    }
-
 }
