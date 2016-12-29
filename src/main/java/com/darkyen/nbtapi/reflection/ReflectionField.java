@@ -1,4 +1,6 @@
-package com.darkyen.nbtapi;
+package com.darkyen.nbtapi.reflection;
+
+import com.darkyen.nbtapi.NBTException;
 
 import java.lang.reflect.Field;
 
@@ -17,7 +19,7 @@ public class ReflectionField<Type> {
             try {
                 field = ofClass.Class().getDeclaredField(fieldName);
             } catch (NoSuchFieldException e1) {
-                throw new NBTAPIException("Field "+ofClass+"#"+fieldName+" does not exist", e1);
+                throw new NBTException("Field "+ofClass+"#"+fieldName+" does not exist", e1);
             }
         }
         if (!field.isAccessible()) {
@@ -30,7 +32,7 @@ public class ReflectionField<Type> {
         try {
             field.set(instance, value);
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new NBTAPIException("Can't set field "+field+" of "+instance+" to "+value, e);
+            throw new NBTException("Can't set field "+field+" of "+instance+" to "+value, e);
         }
     }
 
@@ -39,7 +41,7 @@ public class ReflectionField<Type> {
             //noinspection unchecked
             return (Type)field.get(instance);
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new NBTAPIException("Can't get field "+field+" of "+instance, e);
+            throw new NBTException("Can't get field "+field+" of "+instance, e);
         }
     }
 }

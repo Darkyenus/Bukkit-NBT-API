@@ -1,7 +1,10 @@
 package com.darkyen.nbtapi.json;
 
-import com.darkyen.nbtapi.NBT;
-import com.darkyen.nbtapi.NBTAPIException;
+import com.darkyen.nbtapi.nbt.NBTBase;
+import com.darkyen.nbtapi.NBTException;
+import com.darkyen.nbtapi.nbt.NBTTagType;
+import com.darkyen.nbtapi.nbt.NBTCompound;
+import com.darkyen.nbtapi.nbt.*;
 import com.esotericsoftware.jsonbeans.JsonValue;
 
 /**
@@ -28,14 +31,14 @@ public final class NBTJson {
         }
     }
 
-    public static NBT nbtFromJson(JsonValue value) throws NBTAPIException {
+    public static NBTBase nbtFromJson(JsonValue value) throws NBTException {
         return nbtFromJson(value, null, null, null);
     }
 
-    public static NBT nbtFromJson(JsonValue value, NBT.Type preferredInteger, NBT.Type preferredFloat, NBT.Type preferredListOrArray) throws NBTAPIException {
+    public static NBTBase nbtFromJson(JsonValue value, NBTTagType preferredInteger, NBTTagType preferredFloat, NBTTagType preferredListOrArray) throws NBTException {
         switch (value.type()) {
             case object: {
-                final NBT.NBTCompound result = new NBT.NBTCompound();
+                final NBTCompound result = new NBTCompound();
                 for (JsonValue element : value) {
                     result.value.put(element.name(), nbtFromJson(element, preferredInteger, preferredFloat, preferredListOrArray));
                 }
@@ -43,7 +46,7 @@ public final class NBTJson {
             }
             case array: {
                 if (value.size == 0) {
-                    return new NBT.NBTList<>();
+                    return new NBTList<>();
                 } else {
                     // All values must be same type. Which type is this?
                     final byte NON_INTEGER = -1;
@@ -62,31 +65,31 @@ public final class NBTJson {
                         }
                     }
 
-                    if (widestType == BYTE && preferredListOrArray != NBT.Type.Int_Array) {
+                    if (widestType == BYTE && preferredListOrArray != NBTTagType.Int_Array) {
                         //It can be byte array (and called did not prefer int array, which is also possible)!
-                        return new NBT.NBTByteArray(value.asByteArray());
+                        return new NBTByteArray(value.asByteArray());
                     } else if (widestType <= INT) {
                         //It can be int array, and we will do just that
-                        return new NBT.NBTIntArray(value.asIntArray());
+                        return new NBTIntArray(value.asIntArray());
                     } else {
                         //It is something different, do something sane
 
-                        final NBT.NBTList<NBT> result = new NBT.NBTList<>();
+                        final NBTList<NBTBase> result = new NBTList<>();
                         for (JsonValue element : value) {
-                            result.value.add(nbtFromJson(element, NBT.Type.Long, NBT.Type.Double, preferredListOrArray));
+                            result.value.add(nbtFromJson(element, NBTTagType.Long, NBTTagType.Double, preferredListOrArray));
                         }
                         return result;
                     }
                 }
             }
             case stringValue:
-                return new NBT.NBTString(value.asString());
+                return new NBTString(value.asString());
             case doubleValue: {
                 final double d = value.asDouble();
-                if (((float)d) == d || preferredFloat != NBT.Type.Double) {
-                    return new NBT.NBTFloat((float)d);
+                if (((float)d) == d || preferredFloat != NBTTagType.Double) {
+                    return new NBTFloat((float)d);
                 } else {
-                    return new NBT.NBTDouble(d);
+                    return new NBTDouble(d);
                 }
             }
             case longValue:{
@@ -97,32 +100,32 @@ public final class NBTJson {
                     switch (preferredInteger) {//byte is automatic, if possible
                         case Short:
                             if (width <= SHORT) {
-                                return new NBT.NBTShort((short)l);
+                                return new NBTShort((short)l);
                             }
                             break;
                         case Int:
                             if (width <= INT) {
-                                return new NBT.NBTInt((int)l);
+                                return new NBTInt((int)l);
                             }
                             break;
                         case Long:
-                            return new NBT.NBTLong(l);
+                            return new NBTLong(l);
                     }
                 }
 
                 switch (width) {
-                    case BYTE: return new NBT.NBTByte((byte)l);
-                    case SHORT: return new NBT.NBTShort((short)l);
-                    case INT: return new NBT.NBTInt((int)l);
-                    case LONG: return new NBT.NBTLong(l);
+                    case BYTE: return new NBTByte((byte)l);
+                    case SHORT: return new NBTShort((short)l);
+                    case INT: return new NBTInt((int)l);
+                    case LONG: return new NBTLong(l);
                 }
             }
             case booleanValue:
-                return new NBT.NBTByte((byte) (value.asBoolean() ? 1 : 0));
+                return new NBTByte((byte) (value.asBoolean() ? 1 : 0));
             case nullValue:
-                return new NBT.NBTString("");
+                return new NBTString("");
             default:
-                throw new NBTAPIException("Unknown type of JsonValue: "+value);
+                throw new NBTException("Unknown type of JsonValue: "+value);
         }
     }
 

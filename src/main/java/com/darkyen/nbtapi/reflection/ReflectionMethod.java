@@ -1,4 +1,6 @@
-package com.darkyen.nbtapi;
+package com.darkyen.nbtapi.reflection;
+
+import com.darkyen.nbtapi.NBTException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,7 +18,7 @@ public final class ReflectionMethod <Result> {
             //noinspection unchecked
             method = ofClass.Class().getMethod(methodName, parameters);
         } catch (NoSuchMethodException e) {
-            throw new NBTAPIException("Method \""+methodName+"\" of class "+ofClass+" not found", e);
+            throw new NBTException("Method \""+methodName+"\" of class "+ofClass+" not found", e);
         }
     }
 
@@ -29,7 +31,7 @@ public final class ReflectionMethod <Result> {
             //noinspection unchecked
             return (Result)method.invoke(instance, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new NBTAPIException("Failed to invoke "+method.getDeclaringClass().getName()+"#"+method.getName(), e);
+            throw new NBTException("Failed to invoke "+method.getDeclaringClass().getName()+"#"+method.getName(), e);
         }
     }
 

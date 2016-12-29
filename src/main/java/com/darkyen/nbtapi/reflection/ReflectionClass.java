@@ -1,4 +1,6 @@
-package com.darkyen.nbtapi;
+package com.darkyen.nbtapi.reflection;
+
+import com.darkyen.nbtapi.NBTException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -19,7 +21,7 @@ public class ReflectionClass {
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new NBTAPIException("Failed to get class \""+className+"\"", e);
+            throw new NBTException("Failed to get class \""+className+"\"", e);
         }
         constructors = clazz.getConstructors();
     }
@@ -28,7 +30,7 @@ public class ReflectionClass {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new NBTAPIException("Failed to create new instance of "+this, e);
+            throw new NBTException("Failed to create new instance of "+this, e);
         }
     }
 
@@ -36,16 +38,16 @@ public class ReflectionClass {
         Constructor bestFit = null;
         for (Constructor constructor : constructors) {
             if (constructor.getParameterCount() == parameters.length) {
-                if (bestFit != null) throw new NBTAPIException("Can't determine best constructor from parameter count alone");
+                if (bestFit != null) throw new NBTException("Can't determine best constructor from parameter count alone");
                 bestFit = constructor;
             }
         }
-        if (bestFit == null) throw new NBTAPIException("No constructor with "+parameters.length+" parameters");
+        if (bestFit == null) throw new NBTException("No constructor with "+parameters.length+" parameters");
 
         try {
             return bestFit.newInstance(parameters);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new NBTAPIException("Failed to create new instance of "+this+", using "+bestFit+" with parameters "+ Arrays.toString(parameters));
+            throw new NBTException("Failed to create new instance of "+this+", using "+bestFit+" with parameters "+ Arrays.toString(parameters));
         }
     }
 
