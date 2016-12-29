@@ -1,4 +1,4 @@
-package de.tr7zw.itemnbtapi;
+package com.darkyen.nbtapi;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

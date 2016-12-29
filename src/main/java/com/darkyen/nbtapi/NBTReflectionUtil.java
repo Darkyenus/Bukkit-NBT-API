@@ -1,4 +1,4 @@
-package de.tr7zw.itemnbtapi;
+package com.darkyen.nbtapi;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
