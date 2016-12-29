@@ -7,11 +7,11 @@ import java.lang.reflect.Method;
  *
  */
 @SuppressWarnings("unused")
-public final class ReflectionMethod {
+public final class ReflectionMethod <Result> {
 
     private final Method method;
 
-    public ReflectionMethod(ReflectionClass ofClass, String methodName, Class...parameters) {
+    ReflectionMethod(ReflectionClass ofClass, String methodName, Class...parameters) {
         try {
             //noinspection unchecked
             method = ofClass.Class().getMethod(methodName, parameters);
@@ -20,11 +20,11 @@ public final class ReflectionMethod {
         }
     }
 
-    public <Result> Result invoke(Object instance) {
+    public Result invoke(Object instance) {
         return invoke(instance, ReflectionClass.NO_OBJECTS);
     }
 
-    public <Result> Result invoke(Object instance, Object...parameters) {
+    public Result invoke(Object instance, Object...parameters) {
         try {
             //noinspection unchecked
             return (Result)method.invoke(instance, parameters);
@@ -33,11 +33,11 @@ public final class ReflectionMethod {
         }
     }
 
-    public <Result> Result invokeStatic() {
+    public Result invokeStatic() {
         return invokeStatic(ReflectionClass.NO_OBJECTS);
     }
 
-    public <Result> Result invokeStatic(Object...parameters) {
+    public Result invokeStatic(Object...parameters) {
         return invoke(null, parameters);
     }
 
