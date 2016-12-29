@@ -2,6 +2,7 @@ package de.tr7zw.itemnbtapi;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 /**
  *
@@ -44,7 +45,7 @@ public class ReflectionClass {
         try {
             return bestFit.newInstance(parameters);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new NBTAPIException("Failed to create new instance of "+this+", using "+bestFit+" with parameters "+parameters);
+            throw new NBTAPIException("Failed to create new instance of "+this+", using "+bestFit+" with parameters "+ Arrays.toString(parameters));
         }
     }
 
