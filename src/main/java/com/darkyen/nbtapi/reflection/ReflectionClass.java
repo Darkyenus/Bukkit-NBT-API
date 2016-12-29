@@ -1,6 +1,7 @@
 package com.darkyen.nbtapi.reflection;
 
 import com.darkyen.nbtapi.NBTException;
+import org.bukkit.Bukkit;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +12,8 @@ import java.util.Arrays;
  */
 public class ReflectionClass {
 
+    public static final String BukkitVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+
     public static final Class[] NO_CLASSES = new Class[0];
     public static final Object[] NO_OBJECTS = new Object[0];
 
@@ -18,10 +21,11 @@ public class ReflectionClass {
     private final Constructor[] constructors;
 
     public ReflectionClass(String className) {
+        final String replacedClassName = className.replace("{BukkitVersion}", BukkitVersion);
         try {
-            clazz = Class.forName(className);
+            clazz = Class.forName(replacedClassName);
         } catch (ClassNotFoundException e) {
-            throw new NBTException("Failed to get class \""+className+"\"", e);
+            throw new NBTException("Failed to get class \""+replacedClassName+"\" "+(replacedClassName.equals(className) ? "" : "(Original: \""+className+"\")"), e);
         }
         constructors = clazz.getConstructors();
     }

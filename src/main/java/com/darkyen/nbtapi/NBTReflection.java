@@ -14,51 +14,49 @@ final class NBTReflection {
 
     //region Cache
 
-    static final String BukkitVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-
-    private static final ReflectionClass NMSItemStack = new ReflectionClass("net.minecraft.server." + BukkitVersion + ".ItemStack");
-    private static final ReflectionClass CraftItemStack = new ReflectionClass("org.bukkit.craftbukkit." + BukkitVersion + ".inventory.CraftItemStack");
+    private static final ReflectionClass NMSItemStack = new ReflectionClass("net.minecraft.server.{BukkitVersion}.ItemStack");
+    private static final ReflectionClass CraftItemStack = new ReflectionClass("org.bukkit.craftbukkit.{BukkitVersion}.inventory.CraftItemStack");
 
     private static final ReflectionMethod<Object> CraftItemStack_asNMSCopy = CraftItemStack.method("asNMSCopy", ItemStack.class);
     private static final ReflectionMethod<ItemStack> CraftItemStack_asCraftMirror = CraftItemStack.method("asCraftMirror", NMSItemStack.Class());
 
     //region NBT Tags
-    static final ReflectionClass NBTBase = new ReflectionClass("net.minecraft.server."+ NBTReflection.BukkitVersion+".NBTBase");
+    static final ReflectionClass NBTBase = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTBase");
     static final ReflectionMethod<Byte> NBTBase_getTypeId = NBTBase.method("getTypeId");
 
-    static final ReflectionClass NBTTagByte = new ReflectionClass("net.minecraft.server." + NBTReflection.BukkitVersion + ".NBTTagByte");
+    static final ReflectionClass NBTTagByte = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTTagByte");
     static final ReflectionField<Byte> NBTTagByte_data = NBTTagByte.field("data");
 
-    static final ReflectionClass NBTTagShort = new ReflectionClass("net.minecraft.server." + NBTReflection.BukkitVersion + ".NBTTagShort");
+    static final ReflectionClass NBTTagShort = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTTagShort");
     static final ReflectionField<Short> NBTTagShort_data = NBTTagShort.field("data");
 
-    static final ReflectionClass NBTTagInt = new ReflectionClass("net.minecraft.server." + NBTReflection.BukkitVersion + ".NBTTagInt");
+    static final ReflectionClass NBTTagInt = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTTagInt");
     static final ReflectionField<Integer> NBTTagInt_data = NBTTagInt.field("data");
 
-    static final ReflectionClass NBTTagLong = new ReflectionClass("net.minecraft.server." + NBTReflection.BukkitVersion + ".NBTTagLong");
+    static final ReflectionClass NBTTagLong = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTTagLong");
     static final ReflectionField<Long> NBTTagLong_data = NBTTagLong.field("data");
 
-    static final ReflectionClass NBTTagFloat = new ReflectionClass("net.minecraft.server." + NBTReflection.BukkitVersion + ".NBTTagFloat");
+    static final ReflectionClass NBTTagFloat = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTTagFloat");
     static final ReflectionField<Float> NBTTagFloat_data = NBTTagFloat.field("data");
 
-    static final ReflectionClass NBTTagDouble = new ReflectionClass("net.minecraft.server." + NBTReflection.BukkitVersion + ".NBTTagDouble");
+    static final ReflectionClass NBTTagDouble = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTTagDouble");
     static final ReflectionField<Double> NBTTagDouble_data = NBTTagDouble.field("data");
 
-    static final ReflectionClass NBTTagByteArray = new ReflectionClass("net.minecraft.server." + NBTReflection.BukkitVersion + ".NBTTagByteArray");
+    static final ReflectionClass NBTTagByteArray = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTTagByteArray");
     static final ReflectionMethod<byte[]> NBTTagByteArray_asByteArray = NBTTagByteArray.method("c");
 
-    static final ReflectionClass NBTTagString = new ReflectionClass("net.minecraft.server." + NBTReflection.BukkitVersion + ".NBTTagString");
+    static final ReflectionClass NBTTagString = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTTagString");
     static final ReflectionMethod<String> NBTTagString_asString = NBTTagString.method("c_");
 
-    static final ReflectionClass NBTTagList = new ReflectionClass("net.minecraft.server." + NBTReflection.BukkitVersion + ".NBTTagList");
+    static final ReflectionClass NBTTagList = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTTagList");
     static final ReflectionField<List<Object>> NBTTagList_list = NBTTagList.field("list");
     static final ReflectionMethod NBTTagList_add = NBTTagList.method("add", NBTBase.Class());
 
-    static final ReflectionClass NBTTagCompound = new ReflectionClass("net.minecraft.server." + NBTReflection.BukkitVersion + ".NBTTagCompound");
+    static final ReflectionClass NBTTagCompound = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTTagCompound");
     static final ReflectionField<Map<String, Object>> NBTTagCompound_map = NBTTagCompound.field("map");
     static final ReflectionMethod NBTTagCompound_set = NBTTagCompound.method("set", String.class, NBTBase.Class());
 
-    static final ReflectionClass NBTTagIntArray = new ReflectionClass("net.minecraft.server." + NBTReflection.BukkitVersion + ".NBTTagIntArray");
+    static final ReflectionClass NBTTagIntArray = new ReflectionClass("net.minecraft.server.{BukkitVersion}.NBTTagIntArray");
     static final ReflectionMethod<int[]> NBTTagIntArray_asIntArray = NBTTagIntArray.method("d");
     //endregion
 
