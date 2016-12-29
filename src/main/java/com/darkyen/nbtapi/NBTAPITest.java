@@ -47,7 +47,7 @@ class NBTAPITest {
             compound.value.put("11-int-array", new NBT.NBTIntArray(INT_ARRAY));
 
             ItemStack item = new ItemStack(Material.STONE, 1);
-            final ItemStack itemWithTag = NBTReflectionUtil.setTag(item, compound);
+            final ItemStack itemWithTag = NBTReflectionUtil.createItemWithTag(item, compound);
 
             final NBT.NBTCompound tagAfterTest = NBTReflectionUtil.getTag(itemWithTag);
 

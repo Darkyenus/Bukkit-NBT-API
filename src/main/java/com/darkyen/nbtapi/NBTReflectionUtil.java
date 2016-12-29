@@ -42,7 +42,7 @@ public class NBTReflectionUtil {
         }
     }
 
-    public static ItemStack setTag(ItemStack item, NBT.NBTCompound nbt) {
+    public static ItemStack createItemWithTag(ItemStack item, NBT.NBTCompound nbt) {
         final Object nmsItem = asNMSCopy(item);
         final Object nmsTag = NBT.toNMSTag(nbt);
         NMSItemStack_setTag.invoke(nmsItem, nmsTag);
