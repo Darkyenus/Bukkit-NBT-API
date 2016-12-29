@@ -45,64 +45,65 @@ public abstract class NBT {
     static final ReflectionClass NBTTagIntArray = new ReflectionClass("net.minecraft.server." + NBTReflectionUtil.BukkitVersion + ".NBTTagIntArray");
     static final ReflectionMethod<int[]> NBTTagIntArray_asIntArray = NBTTagIntArray.method("d");
 
-    public static NBT fromNMSTag(Object nmsTag) {
-        final byte type = NBTBase_getTypeId.invoke(nmsTag);
-		switch (type) {
-		case TYPE_End: {
-		    return null;
-        }
-		case TYPE_Byte: {
-		    return new NBTByte(NBTTagByte_data.get(nmsTag));
-        }
-		case TYPE_Short: {
-            return new NBTShort(NBTTagShort_data.get(nmsTag));
-        }
-		case TYPE_Int: {
-            return new NBTInt(NBTTagInt_data.get(nmsTag));
-        }
-		case TYPE_Long: {
-            return new NBTLong(NBTTagLong_data.get(nmsTag));
-        }
-		case TYPE_Float: {
-            return new NBTFloat(NBTTagFloat_data.get(nmsTag));
-        }
-		case TYPE_Double: {
-            return new NBTDouble(NBTTagDouble_data.get(nmsTag));
-        }
-		case TYPE_Byte_Array: {
-		    return new NBTByteArray(NBTTagByteArray_asByteArray.invoke(nmsTag));
-        }
-		case TYPE_String: {
-		    return new NBTString(NBTTagString_asString.invoke(nmsTag));
-        }
-		case TYPE_List: {
-            final NBTList list = new NBTList();
-            final List<Object> nmsList = NBTTagList_list.get(nmsTag);
-            for (Object innerNmsTag : nmsList) {
-                final NBT innerNbt = fromNMSTag(innerNmsTag);
-                if (innerNbt != null) {
-                    //noinspection unchecked
-                    list.value.add(innerNbt);
-                }
-            }
-            return list;
-        }
-		case TYPE_Compound: {
-            final NBTCompound compound = new NBTCompound();
-            final Map<String, Object> compoundMembers = NBTTagCompound_map.get(nmsTag);
-            for (Map.Entry<String, Object> entry : compoundMembers.entrySet()) {
-                final NBT nbt = fromNMSTag(entry.getValue());
-                if (nbt != null) compound.value.put(entry.getKey(), nbt);
-            }
-            return compound;
-        }
-		case TYPE_Int_Array: {
-		    return new NBTIntArray(NBTTagIntArray_asIntArray.invoke(nmsTag));
-        }
+	public static NBT fromNMSTag (Object nmsTag) {
+		final byte type = NBTBase_getTypeId.invoke(nmsTag);
+		switch (Type.typeOf(type)) {
+		case End: {
+			return null;
 		}
-		throw new NBTAPIException("Unknown type "+type);
-    }
-    
+		case Byte: {
+			return new NBTByte(NBTTagByte_data.get(nmsTag));
+		}
+		case Short: {
+			return new NBTShort(NBTTagShort_data.get(nmsTag));
+		}
+		case Int: {
+			return new NBTInt(NBTTagInt_data.get(nmsTag));
+		}
+		case Long: {
+			return new NBTLong(NBTTagLong_data.get(nmsTag));
+		}
+		case Float: {
+			return new NBTFloat(NBTTagFloat_data.get(nmsTag));
+		}
+		case Double: {
+			return new NBTDouble(NBTTagDouble_data.get(nmsTag));
+		}
+		case Byte_Array: {
+			return new NBTByteArray(NBTTagByteArray_asByteArray.invoke(nmsTag));
+		}
+		case String: {
+			return new NBTString(NBTTagString_asString.invoke(nmsTag));
+		}
+		case List: {
+			final NBTList list = new NBTList();
+			final List<Object> nmsList = NBTTagList_list.get(nmsTag);
+			for (Object innerNmsTag : nmsList) {
+				final NBT innerNbt = fromNMSTag(innerNmsTag);
+				if (innerNbt != null) {
+					// noinspection unchecked
+					list.value.add(innerNbt);
+				}
+			}
+			return list;
+		}
+		case Compound: {
+			final NBTCompound compound = new NBTCompound();
+			final Map<String, Object> compoundMembers = NBTTagCompound_map.get(nmsTag);
+			for (Map.Entry<String, Object> entry : compoundMembers.entrySet()) {
+				final NBT nbt = fromNMSTag(entry.getValue());
+				if (nbt != null) compound.value.put(entry.getKey(), nbt);
+			}
+			return compound;
+		}
+		case Int_Array: {
+			return new NBTIntArray(NBTTagIntArray_asIntArray.invoke(nmsTag));
+		}
+		default:
+			throw new AssertionError("Unknown type " + type);
+		}
+	}
+
     public static Object toNMSTag(NBT nbt) {
         if (nbt instanceof NBTByte) {
             return NBTTagByte.newInstance(((NBTByte) nbt).value);
@@ -140,18 +141,16 @@ public abstract class NBT {
         }
     }
 
-    private static final byte TYPE_End          = 0;
-    private static final byte TYPE_Byte         = 1;
-    private static final byte TYPE_Short        = 2;
-    private static final byte TYPE_Int          = 3;
-    private static final byte TYPE_Long         = 4;
-    private static final byte TYPE_Float        = 5;
-    private static final byte TYPE_Double       = 6;
-    private static final byte TYPE_Byte_Array   = 7;
-    private static final byte TYPE_String       = 8;
-    private static final byte TYPE_List         = 9;
-    private static final byte TYPE_Compound     = 10;
-    private static final byte TYPE_Int_Array    = 11;
+	public enum Type {
+		End, Byte, Short, Int, Long, Float, Double, Byte_Array, String, List, Compound, Int_Array;
+		
+		private final static Type[] VALUES = values();
+		
+		public static Type typeOf(byte b) {
+		    if (b < 0 || b >= VALUES.length) throw new NBTAPIException("Illegal NBT tag type number: "+b);
+		    return VALUES[b];
+        }
+	}
 
     public static final class NBTByte extends NBT {
         public final byte value;

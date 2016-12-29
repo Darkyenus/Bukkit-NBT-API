@@ -18,6 +18,15 @@
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Optional, but needed for any json compatibility (com.darkyen.nbtapi.json package) -->
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>jsonbeans</artifactId>
+            <version>0.7</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
