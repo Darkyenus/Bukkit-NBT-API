@@ -7,9 +7,13 @@ import com.darkyen.nbtapi.nbt.NBTCompound;
 import com.darkyen.nbtapi.nbt.*;
 import com.esotericsoftware.jsonbeans.JsonValue;
 
+import java.util.List;
+import java.util.Map;
+
 /**
- *
+ * API for conversion between NBT and Json
  */
+@SuppressWarnings("unused")
 public final class NBTJson {
 
     private NBTJson() {}
@@ -49,7 +53,7 @@ public final class NBTJson {
                     return new NBTList<>();
                 } else {
                     // All values must be same type. Which type is this?
-                    final byte NON_INTEGER = -1;
+                    final byte NON_INTEGER = Byte.MAX_VALUE;
                     byte widestType = 0;
 
                     for (JsonValue element : value) {
@@ -126,6 +130,88 @@ public final class NBTJson {
                 return new NBTString("");
             default:
                 throw new NBTException("Unknown type of JsonValue: "+value);
+        }
+    }
+
+    public static JsonValue nbtToJson(NBTBase nbt) {
+        if (nbt instanceof NBTByte) {
+            return new JsonValue(((NBTByte) nbt).value);
+        } else if (nbt instanceof NBTShort) {
+            return new JsonValue(((NBTShort) nbt).value);
+        } else if (nbt instanceof NBTInt) {
+            return new JsonValue(((NBTInt) nbt).value);
+        } else if (nbt instanceof NBTLong) {
+            return new JsonValue(((NBTLong) nbt).value);
+        } else if (nbt instanceof NBTFloat) {
+            return new JsonValue(((NBTFloat) nbt).value);
+        } else if (nbt instanceof NBTDouble) {
+            return new JsonValue(((NBTDouble) nbt).value);
+        } else if (nbt instanceof NBTByteArray) {
+            final byte[] array = ((NBTByteArray) nbt).value;
+            final JsonValue result = new JsonValue(JsonValue.ValueType.array);
+            result.size = array.length;
+            if (array.length != 0) {
+                JsonValue element = new JsonValue(array[0]);
+                result.child = element;
+                for (int i = 1; i < array.length; i++) {
+                    JsonValue next = new JsonValue(array[i]);
+                    element.next = next;
+                    next.prev = element;
+                    element = next;
+                }
+            }
+            return result;
+        } else if (nbt instanceof NBTString) {
+            return new JsonValue(((NBTString) nbt).value);
+        } else if (nbt instanceof NBTList) {
+            @SuppressWarnings("unchecked") final List<NBTBase> array = ((NBTList) nbt).value;
+            final JsonValue result = new JsonValue(JsonValue.ValueType.array);
+            result.size = array.size();
+            if (array.size() != 0) {
+                JsonValue element = nbtToJson(array.get(0));
+                result.child = element;
+                for (int i = 1; i < array.size(); i++) {
+                    JsonValue next = nbtToJson(array.get(i));
+                    element.next = next;
+                    next.prev = element;
+                    element = next;
+                }
+            }
+            return result;
+        } else if (nbt instanceof NBTCompound) {
+            final JsonValue result = new JsonValue(JsonValue.ValueType.object);
+
+            JsonValue previous = null;
+            for (Map.Entry<String, NBTBase> entry : ((NBTCompound) nbt).value.entrySet()) {
+                final JsonValue next = nbtToJson(entry.getValue());
+                next.name = entry.getKey();
+                if (previous == null) {
+                    result.child = next;
+                } else {
+                    previous.next = next;
+                    next.prev = previous;
+                }
+                previous = next;
+            }
+
+            return result;
+        } else if (nbt instanceof NBTIntArray) {
+            final int[] array = ((NBTIntArray) nbt).value;
+            final JsonValue result = new JsonValue(JsonValue.ValueType.array);
+            result.size = array.length;
+            if (array.length != 0) {
+                JsonValue element = new JsonValue(array[0]);
+                result.child = element;
+                for (int i = 1; i < array.length; i++) {
+                    JsonValue next = new JsonValue(array[i]);
+                    element.next = next;
+                    next.prev = element;
+                    element = next;
+                }
+            }
+            return result;
+        } else {
+            throw new IllegalArgumentException("Invalid NBT tag: " + nbt);
         }
     }
 
