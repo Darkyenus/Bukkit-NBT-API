@@ -10,6 +10,10 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -21,10 +25,10 @@
 
         <!-- Optional, but needed for any json compatibility (com.darkyen.nbtapi.json package) -->
         <dependency>
-            <groupId>com.esotericsoftware</groupId>
+            <groupId>com.github.EsotericSoftware</groupId>
             <artifactId>jsonbeans</artifactId>
-            <version>0.7</version>
-            <scope>compile</scope>
+            <version>7306654ed3</version>
+            <scope>provided</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>
